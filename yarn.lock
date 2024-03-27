@@ -559,6 +559,11 @@ globals@^13.19.0:
   dependencies:
     type-fest "^0.20.2"
 
+google-translate-api-x@^10.6.8:
+  version "10.6.8"
+  resolved "https://registry.yarnpkg.com/google-translate-api-x/-/google-translate-api-x-10.6.8.tgz#87e87ffa01c9cffbd477b13b66ce6ec254b7d327"
+  integrity sha512-vlXnCQhMcy00P2uX/mK3NzJb4HBMhoKo39PSmupiiVKLgsAZp8b22OV48dcAUxykAuPxQreyBYz4P6jFCzeZjA==
+
 graphemer@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/graphemer/-/graphemer-1.4.0.tgz#fb2f1d55e0e3a1849aeffc90c4fa0dd53a0e66c6"
