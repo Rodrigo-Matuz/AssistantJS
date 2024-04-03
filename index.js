@@ -1,17 +1,22 @@
-const { Client, GatewayIntentBits, Collection, Partials } = require("discord.js");
+const {
+    Client,
+    GatewayIntentBits,
+    Collection,
+    Partials,
+} = require("discord.js");
 const { loadCommands } = require("./src/utilities/loadCommands.js");
 const { loadEvents } = require("./src/utilities/loadEvents.js");
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMessageReactions
+        GatewayIntentBits.GuildMessageReactions,
     ],
     partials: [
-        Partials.Message,
+        Partials.Message, 
         Partials.Channel,
         Partials.Reaction
-    ]
+    ],
 });
 const { config } = require("dotenv");
 
