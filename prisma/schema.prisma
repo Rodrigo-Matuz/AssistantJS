@@ -14,15 +14,32 @@ datasource db {
     directUrl = env("DATABASE_URL")
 }
 
-model MonopolyBoard {
-    id      Int     @id @default(autoincrement())
-    user    User    @relation(fields: [user_id], references: [user_id])
-    user_id Int     @unique
-    victories   Int
+model User {
+    userId      String      @id @unique
+    userName    String
+    createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+
+    @@index([userId])
 }
 
-model User {
-    id      Int @id @default(autoincrement())
-    user_id Int @unique
-    monopolyBoards  MonopolyBoard[]
+model ColorRole {
+    guildId     String
+    userId      String
+    roleId      String
+    
+    @@unique([guildId, userId])
+    @@id([guildId, userId])
 }
+
+model ColorGuild {
+    guildId     String      @id @unique
+    channelId   String
+    colorPosId  String
+}
+
+//model MonopolyBoard {
+//    userId      String      @id
+//    user        User        @relation(fields: [userId], references: [userId])
+//    victories   Int
+//}
+
