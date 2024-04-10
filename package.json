@@ -8,14 +8,14 @@
     "license": "MIT",
     "private": true,
     "dependencies": {
-        "@prisma/client": "^5.11.0",
+        "@prisma/client": "^5.12.1",
         "discord.js": "^14.14.1",
         "dotenv": "^16.4.5",
         "google-translate-api-x": "^10.6.8"
     },
     "devDependencies": {
         "eslint": "^8.57.0",
-        "prisma": "^5.11.0"
+        "prisma": "^5.12.1"
     },
     "scripts": {
         "bot": "node index.js",
