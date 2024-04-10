@@ -27,7 +27,7 @@ for (const folder of commandFolders) {
 
 config();
 const TOKEN = process.env.DISCORD_TOKEN;
-const CLIENT_ID = process.env.APPLICATION_ID;
+const CLIENT_ID = process.env.CLIENT_ID;
 const rest = new REST().setToken(TOKEN);
 
 (async () => {
