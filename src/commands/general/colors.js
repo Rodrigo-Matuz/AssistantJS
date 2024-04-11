@@ -14,20 +14,16 @@ function isValidHex(hexColor) {
 }
 
 // TODO: put this function somewhere else
-async function getOrCreateRole(interaction, hexCode, position) {
-    let role = interaction.guild.roles.cache.find(role => role.name === hexCode);
-    if (!role) {
-        role = await interaction.guild.roles.create({
-            name: `${hexCode}`,
-            reason: "Color role",
-            hoist: false,
-            mentionable: false,
-            position: (position - 1),
-            color: `${hexCode}`,
-            permissions: [],
-        })
-    }
-    return role;
+async function createRole(interaction, hexCode, position) {
+    return role = await interaction.guild.roles.create({
+        name: `${hexCode}`,
+        reason: "Color role",
+        hoist: false,
+        mentionable: false,
+        position: position,
+        color: `${hexCode}`,
+        permissions: [],
+    });
 }
 
 module.exports = {
@@ -55,51 +51,51 @@ module.exports = {
     ,
     async execute(interaction) {
         if (!interaction.isCommand()) return;
-
+        await interaction.deferReply({ ephemeral: true });
         const hexCode = interaction.options.getString("hex")
         if (!isValidHex(hexCode)) {            
             await interaction.reply({ 
                 content: "Not a valid #HEX color",
-                ephemeral: true
             })
             return;
         }
+        const guild = interaction.guild;
         // TODO: add this command only for available guilds so no need to check
-        const colorRoleObj = await getColorGuild(interaction.guild.id);
-        if (!colorRoleObj) {
-            await interaction.reply({
-                content: "This guild does not have the Color Module set",
-                ephemeral: true
-            });
+        const colorGuildObj = await getColorGuild(guild.id);
+        if (!colorGuildObj) {
+            await interaction.reply({ content: "This guild does not have the Color Module set" });
             return;
         }
-        const colorRole = interaction.guild.roles.cache.find(role => role.id === colorRoleObj.colorPosId);
+        const colorRole = guild.roles.cache.find(role => role.id === colorGuildObj.colorPosId);
         if (!colorRole) {
-            await interaction.reply({
-                content: `There is not Color Role for reference, previous color role: <@&${colorRoleObj.colorPosId}>\nIf it's deleted, please set another one.`,
-                ephemeral: true,
-            })
+            await interaction.reply({ content: `There is not Color Role for reference, previous color role: <@&${colorGuildObj.colorPosId}>\nIf it's deleted, please set another one.` })
             return;
         }
-        const role = await getOrCreateRole(interaction, hexCode, colorRole.position);
-        const colorRoleUser = await getColorRoleUser(interaction.user.id, interaction.guild.id);
-        if (!colorRoleUser) {
-            
+        // TODO: beautify this and add more error catching.
+        const user = interaction.member;
+        let role = await guild.roles.cache.find(role => role.name === hexCode);
+        let colorRoleUserObj = await getColorRoleUser(user.id, guild.id);
+        if (!colorRoleUserObj) {
+            if (!role) {
+                role = await createRole(interaction, hexCode, colorRole.position);
+                await user.roles.add(role);
+            } else {
+                await user.roles.add(role);
+            }
+        await createColorRoleUser(guild.id, user.id, role.id);
+        } else {
+            const currentRole = await guild.roles.cache.find(role => role.id === colorRoleUserObj.roleId);
+            if (!role) {
+                role = await createRole(interaction, hexCode, colorRole.position);
+            };
+            // FIX: Currently not working
+            await user.roles.remove(currentRole);
+            if (currentRole.members.some(member => member.id !== user.id)) {
+                await currentRole.delete();
+            }
+            await user.roles.add(role);
+            await updateColorRoleUser(guild.id, user.id, role.id);
         }
-         
-        //const user = await fetchSingleDiscordUsersById(interaction.user.id);
-        //if (!user) {
-            
-        //}
-        //await updateUserWithColorRole(user) 
-//      let user  = await fetchSingleDiscordUsersById(interaction.user.id);
-//        if (user == false){
-//            const userId = interaction.user.id;
-//            const userName = interaction.user.username;
-//        } else {
-//            const client = interaction.client;
-//            const user = client.users.fetch(`${interaction.user.id}`)
-//            console.log(user);
-//        }
+        await interaction.editReply({ content: "Done!"});
     }
 };

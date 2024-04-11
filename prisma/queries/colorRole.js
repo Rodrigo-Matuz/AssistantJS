@@ -12,8 +12,10 @@ const prisma = new PrismaClient();
 async function getColorRoleUser(userId, guildId){
     return user = await prisma.colorRole.findUnique({
         where: {
-            userId: userId,
-            guildId: guildId
+            guildId_userId: {
+                userId: userId,
+                guildId: guildId
+            }
         }
     })
 }
@@ -29,8 +31,10 @@ async function getColorRoleUser(userId, guildId){
 async function updateColorRoleUser(guildId, userId, roleId){
     return user = await prisma.colorRole.update({
         where: {
-            guildId: guildId,
-            userId: userId,
+            guildId_userId: {
+                userId: userId,
+                guildId: guildId
+            }
         },
         data: {
             roleId: roleId,
@@ -46,7 +50,7 @@ async function updateColorRoleUser(guildId, userId, roleId){
  * @param {string} userId - The ID of the user.
  * @returns {Promise<object>} - A promise resolving to the newly created color role object.
  */
-async function createColorRoleUser(guildId, roleId, userId){
+async function createColorRoleUser(guildId, userId, roleId){
     return colorRoleObj = await prisma.colorRole.create({
         data: {
             guildId: guildId,
