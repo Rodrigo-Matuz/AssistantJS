@@ -61,7 +61,21 @@ async function createColorRoleUser(guildId, userId, roleId){
 }
 
 
+async function getColorRoleFirstUser(roleId, userId) {
+    return colorRoleObj = await prisma.colorRole.findFirst({
+        where: {
+            roleId: roleId,
+            NOT: {
+                userId: userId
+            }
+        }
+    })
+}
+
+
+
 module.exports = {
+    getColorRoleFirstUser,
     updateColorRoleUser,
     createColorRoleUser,
     getColorRoleUser,

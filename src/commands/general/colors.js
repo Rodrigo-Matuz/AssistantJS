@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
-const { getColorRoleUser, createColorRoleUser, updateColorRoleUser } = require("../../../prisma/queries/colorRole.js");
-const { getColorGuild, updateColorGuild, createColorGuild } = require("../../../prisma/queries/colorGuild.js")
+const { getColorRoleUser, createColorRoleUser, updateColorRoleUser, getColorRoleFirstUser } = require("../../../prisma/queries/colorRole.js");
+const { getColorGuild, updateColorGuild, createColorGuild} = require("../../../prisma/queries/colorGuild.js")
 
 // TODO: put this function somewhere else
 function isValidHex(hexColor) {
@@ -84,13 +84,13 @@ module.exports = {
             }
         await createColorRoleUser(guild.id, user.id, role.id);
         } else {
-            const currentRole = await guild.roles.cache.find(role => role.id === colorRoleUserObj.roleId);
+            let currentRole = await guild.roles.cache.find(role => role.id === colorRoleUserObj.roleId);
             if (!role) {
                 role = await createRole(interaction, hexCode, colorRole.position);
             };
-            // FIX: Currently not working
             await user.roles.remove(currentRole);
-            if (currentRole.members.some(member => member.id !== user.id)) {
+            const moreThanOne = await getColorRoleFirstUser(currentRole.id, user.id);
+            if (!moreThanOne) {
                 await currentRole.delete();
             }
             await user.roles.add(role);
